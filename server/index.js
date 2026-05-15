@@ -1,0 +1,53 @@
+import express from 'express';
+import dotenv from "dotenv";
+import cors from "cors";
+import connectDB from "./config/db.js";
+import cookieParser from "cookie-parser";
+
+import authRoutes from "./routes/authRoutes.js";
+import doctorRoutes from "./routes/doctorRoutes.js";
+import hospitalRoutes from "./routes/hospitalRoutes.js";
+import departmentRoutes from "./routes/departmentRoutes.js";
+import medicalFileRoutes from "./routes/medicalFileRoutes.js";
+import patientRecordRoutes from "./routes/patientRecordRoutes.js";
+import appointmentRoutes from "./routes/appointmentRoutes.js";
+import scheduleRoutes from "./routes/scheduleRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+
+dotenv.config();
+
+const app = express();
+
+connectDB();
+
+app.use(express.json());
+app.use(cookieParser());
+
+/* CORS Configuration */
+app.use(
+  cors({
+    origin: process.env.NODE_ENV === "deployment" 
+      ? [process.env.PROD_FRONTEND_URL] 
+      : [process.env.LOCAL_FRONTEND_URL, "http://127.0.0.1:5173"],
+    credentials: true
+  })
+);
+
+/* Routes */
+app.use("/api/auth", authRoutes);
+app.use("/api/doctors", doctorRoutes);
+app.use("/api/hospitals", hospitalRoutes);
+app.use("/api/departments", departmentRoutes);
+app.use("/api/medical-files", medicalFileRoutes);
+app.use("/api/patient-records", patientRecordRoutes);
+app.use("/api/appointments", appointmentRoutes);
+app.use("/api/schedules", scheduleRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/admin", adminRoutes);
+
+const port = process.env.PORT;
+
+app.listen(port, () => {
+  console.log(`server is running in the port ${port}`);
+});
